@@ -28,8 +28,8 @@ Download the available files from the release.
 ### Steps
 1. Clone the repository:
     ```bash
-    git clone https://github.com/frc8866/ScoutingApp.git
-    cd 8866-Scouting-App
+    git clone https://github.com/frc8866/Scouting.git
+    cd Scouting
     ```
 
 2. Install dependencies:
@@ -43,7 +43,7 @@ Download the available files from the release.
     ```
 
 4. Open your web browser and navigate to `http://localhost:3000` to use the application.
-5. Or go to `https://frc8866.github.io/ScoutingApp` to test it out
+5. Or go to `https://frc8866.github.io/Scouting` to test it out
 
 ## Usage
 
@@ -67,14 +67,10 @@ ScoutingApp/
 │   ├── index.html
 │   └── styles.css
 ├── src/
-│   ├── renderer.js
-│   ├── preload.js
-│   ├── main.js
 │   └── script.js
 ├── .gitignore
-├── package.json
 ├── README.md
-└── qrcode.min.js
+└── qrcode.js
 ```
 
 ## Contributing
