@@ -553,7 +553,8 @@ function resetAll() {
 
     // Reset game phase elements
     document.getElementById("timer").textContent = '15';
-    document.getElementById("timer").style.color = "gold";
+    document.getElementById("timer").style.display = "block"; // Make sure timer is visible
+    document.getElementById("timer").style.color = "gold";    // Reset timer color to gold
     document.getElementById("gamePhase").textContent = 'Pre Game';
     document.getElementById("gamePhase").style.fontWeight = "normal";
     document.getElementById("startGameButton").disabled = false;
