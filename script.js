@@ -141,6 +141,7 @@ function startIntermissionTimer() {
     let intermissionTimeLeft = 2;
     document.getElementById("timer").textContent = intermissionTimeLeft;
     console.log('Intermission timer started');
+    
 
     clearInterval(intermissionCountdown);
     intermissionCountdown = setInterval(() => {
@@ -168,6 +169,11 @@ function startTeleopTimer() {
     togglePickUpPiece();
     updateScoringOptionsVisibility(); 
     console.log('Teleoperated Phase timer started');
+    const button = document.getElementById('trackCycleButton');
+    if (button.classList.contains('active')) {
+        console.log('resetting cycle');
+        button.click(); // Only stop the cycle if one is active
+    }
 
     clearInterval(teleopCountdown);
     teleopCountdown = setInterval(() => {
@@ -482,20 +488,22 @@ function resetRobotButtons() {
 }
 
 function missAutoPiece() {
-    map++;
-    console.log(`Auto piece missed - total misses: ${map}`);
+    
     const button = document.getElementById('trackCycleButton');
     if (button.classList.contains('active')) {
+        map++;
+    console.log(`Auto piece missed - total misses: ${map}`);
         console.log('Active cycle cancelled due to miss');
         button.click(); // Only stop the cycle if one is active
     }
 }
 
 function missTeleopPiece() {
-    mtp++;
-    console.log(`Teleop piece missed - total misses: ${mtp}`);
+    
     const button = document.getElementById('trackCycleButton');
     if (button.classList.contains('active')) {
+        mtp++;
+    console.log(`Teleop piece missed - total misses: ${mtp}`);
         console.log('Active cycle cancelled due to miss');
         button.click(); // Only stop the cycle if one is active
     }
@@ -513,14 +521,12 @@ function resetAll() {
     map = mtp = 0;
     ppp = 0;
     cycleTimes = [];
-
-    // Clear all intervals
     clearInterval(cycleTimer);
     clearInterval(countdown);
     clearInterval(intermissionCountdown);
     clearInterval(teleopCountdown);
 
-    // Reset pre-match form
+    // Reset UI elements
     document.getElementById("scouterName").value = '';
     document.getElementById("matchNumber").value = '';
     document.getElementById("teamNumber").value = '';
@@ -530,56 +536,30 @@ function resetAll() {
     document.getElementById("selectionSummary").style.display = "none";
     document.getElementById("selectionSummary").textContent = '';
 
-    // Reset post-match form
-    document.getElementById("driverSkill").value = '';
-    document.getElementById("robotAbility").value = '';
-    document.getElementById("gamepieceConsistency").value = '';
-    document.getElementById("rolePlayed").value = '';
-    document.getElementById("comments").value = '';
-    document.getElementById("allianceScore").value = '';
-
-    // Reset background color
-    document.body.style.backgroundColor = "black";
-    document.body.style.color = "gold";
-
-    // Reset main sections visibility
     document.getElementById("PreGameSelections").style.display = "block";
     document.getElementById("gameSection").style.display = "none";
     document.getElementById("endGameButtons").style.display = "none";
     document.getElementById("qrCodeButtonSection").style.display = "none";
-    if (document.getElementById("MatchToMaster")) {
-        document.getElementById("MatchToMaster").remove();
+
+    // Safely remove MatchToMaster if it exists
+    const matchToMaster = document.getElementById("MatchToMaster");
+    if (matchToMaster) {
+        matchToMaster.remove();
     }
 
-    // Reset game phase elements
+    // Reset timer and game phase elements
     document.getElementById("timer").textContent = '15';
-    document.getElementById("timer").style.display = "block"; // Make sure timer is visible
-    document.getElementById("timer").style.color = "gold";    // Reset timer color to gold
+    document.getElementById("timer").style.display = "block";  // Ensure timer is visible
+    document.getElementById("timer").style.color = "gold";    // Reset timer color
     document.getElementById("gamePhase").textContent = 'Pre Game';
     document.getElementById("gamePhase").style.fontWeight = "normal";
+
+    // Reset agtt text and make it visible
+    document.getElementById("agtt").style.display = "block";
+    document.getElementById("agtt").textContent = "Real Time Phases and Timer";
+
     document.getElementById("startGameButton").disabled = false;
     document.getElementById("startGameButton").style.display = "block";
-
-    // Reset robot status buttons
-    document.getElementById("deadRobotButton").textContent = 'Dead Robot';
-    document.getElementById("brokenRobotButton").textContent = 'Broken Robot';
-    document.getElementById("resetRobotButton").textContent = 'Reset Counters!';
-    if (document.getElementById("deadRobotButton").classList.contains('active')) {
-        document.getElementById("deadRobotButton").classList.remove('active');
-    }
-
-    // Reset cycle timer button
-    document.getElementById("trackCycleButton").textContent = 'Pick Up Piece';
-    if (document.getElementById("trackCycleButton").classList.contains('active')) {
-        document.getElementById("trackCycleButton").classList.remove('active');
-    }
-
-    // Reset left during autonomous button
-    if (document.getElementById("leftAutonomousButton").classList.contains('active')) {
-        document.getElementById("leftAutonomousButton").classList.remove('active');
-    }
-
-    // Reset section visibility
     document.getElementById("trackCycleButton").style.display = "none";
     document.getElementById("robotStatus").style.display = "none";
     document.getElementById("autoPhase").style.display = "none";
@@ -587,12 +567,65 @@ function resetAll() {
     document.getElementById("endEndGame").style.display = "none";
     document.getElementById("nextButton").style.display = "none";
 
-    // Reset all counters display
+    // Reset scoring counts
     document.querySelectorAll("[id*='Count']").forEach(count => count.textContent = '0');
 
+    // Reset background color
+    document.body.style.backgroundColor = "black";
+    document.body.style.color = "gold";
+    document.body.classList.remove('white-bg'); // Remove the white background class
+
+    // Reset all button states and their visual appearances
+    const buttonsToReset = [
+        'deadRobotButton',
+        'brokenRobotButton',
+        'leftAutonomousButton',
+        'trackCycleButton'
+    ];
+
+    buttonsToReset.forEach(buttonId => {
+        const button = document.getElementById(buttonId);
+        if (button) {
+            button.classList.remove('active');
+            if (buttonId === 'deadRobotButton') {
+                button.textContent = 'Dead Robot';
+            } else if (buttonId === 'brokenRobotButton') {
+                button.textContent = 'Broken Robot';
+            } else if (buttonId === 'trackCycleButton') {
+                button.textContent = 'Pick Up Piece';
+            }
+        }
+    });
+
+    // Reset all associated variables
+    dr = 0; br = 0; drc = 0; brc = 0; // Robot status variables
+    lda = 0;                          // Left during autonomous
+    ppp = 0;                          // Pick up piece state
+    
+    // Reset the robot status button text
+    document.getElementById('resetRobotButton').textContent = 'Reset Counters!';
+
+    // Reset post-match form data
+    document.getElementById("driverSkill").value = '';
+    document.getElementById("robotAbility").value = '';
+    document.getElementById("gamepieceConsistency").value = '';
+    document.getElementById("rolePlayed").value = '';
+    document.getElementById("comments").value = '';
+    document.getElementById("allianceScore").value = '';
+
     // Reset end game buttons
-    document.querySelectorAll("#endGameButtons button").forEach(button => {
-        if (button.classList.contains('active')) {
+    const endGameButtonIds = [
+        'winButton',
+        'lossButton',
+        'tieButton',
+        'parkedButton',
+        'deepButton',
+        'shallowButton'
+    ];
+
+    endGameButtonIds.forEach(buttonId => {
+        const button = document.getElementById(buttonId);
+        if (button) {
             button.classList.remove('active');
         }
     });
