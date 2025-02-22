@@ -355,28 +355,36 @@ function showMatchToMaster() {
 }
 
 function updateAcl1(value) {
-    acl1 = Math.max(0, acl1 + value);
+    let newValue = acl1 + value;
+    if (newValue < 0 || (newValue / 3) > 12) return;
+    acl1 = newValue;
     document.getElementById("acl1Count").textContent = acl1 / 3;
     console.log(`ACL1 updated: ${value > 0 ? 'increased' : 'decreased'} to ${acl1 / 3}`);
     if (value > 0) toggleCycleTimer();
 }
 
 function updateAcl2(value) {
-    acl2 = Math.max(0, acl2 + value);
+    let newValue = acl2 + value;
+    if (newValue < 0 || (newValue / 4) > 12) return;
+    acl2 = newValue;
     document.getElementById("acl2Count").textContent = acl2 / 4;
     console.log(`ACL2 updated: ${value > 0 ? 'increased' : 'decreased'} to ${acl2 / 4}`);
     if (value > 0) toggleCycleTimer();
 }
 
 function updateAcl3(value) {
-    acl3 = Math.max(0, acl3 + value);
+    let newValue = acl3 + value;
+    if (newValue < 0 || (newValue / 6) > 12) return;
+    acl3 = newValue;
     document.getElementById("acl3Count").textContent = acl3 / 6;
     console.log(`ACL3 updated: ${value > 0 ? 'increased' : 'decreased'} to ${acl3 / 6}`);
     if (value > 0) toggleCycleTimer();
 }
 
 function updateAcl4(value) {
-    acl4 = Math.max(0, acl4 + value);
+    let newValue = acl4 + value;
+    if (newValue < 0 || (newValue / 7) > 12) return;
+    acl4 = newValue;
     document.getElementById("acl4Count").textContent = acl4 / 7;
     console.log(`ACL4 updated: ${value > 0 ? 'increased' : 'decreased'} to ${acl4 / 7}`);
     if (value > 0) toggleCycleTimer();
@@ -397,28 +405,36 @@ function updateAan(value) {
 }
 
 function updateTcl1(value) {
-    tcl1 = Math.max(0, tcl1 + value);
+    let newValue = tcl1 + value;
+    if (newValue < 0 || (newValue / 2) > 12) return;
+    tcl1 = newValue;
     document.getElementById("tcl1Count").textContent = tcl1 / 2;
     console.log(`TCL1 updated: ${value > 0 ? 'increased' : 'decreased'} to ${tcl1 / 2}`);
     if (value > 0) toggleCycleTimer();
 }
 
 function updateTcl2(value) {
-    tcl2 = Math.max(0, tcl2 + value);
+    let newValue = tcl2 + value;
+    if (newValue < 0 || (newValue / 3) > 12) return;
+    tcl2 = newValue;
     document.getElementById("tcl2Count").textContent = tcl2 / 3;
     console.log(`TCL2 updated: ${value > 0 ? 'increased' : 'decreased'} to ${tcl2 / 3}`);
     if (value > 0) toggleCycleTimer();
 }
 
 function updateTcl3(value) {
-    tcl3 = Math.max(0, tcl3 + value);
+    let newValue = tcl3 + value;
+    if (newValue < 0 || (newValue / 4) > 12) return;
+    tcl3 = newValue;
     document.getElementById("tcl3Count").textContent = tcl3 / 4;
     console.log(`TCL3 updated: ${value > 0 ? 'increased' : 'decreased'} to ${tcl3 / 4}`);
     if (value > 0) toggleCycleTimer();
 }
 
 function updateTcl4(value) {
-    tcl4 = Math.max(0, tcl4 + value);
+    let newValue = tcl4 + value;
+    if (newValue < 0 || (newValue / 5) > 12) return;
+    tcl4 = newValue;
     document.getElementById("tcl4Count").textContent = tcl4 / 5;
     console.log(`TCL4 updated: ${value > 0 ? 'increased' : 'decreased'} to ${tcl4 / 5}`);
     if (value > 0) toggleCycleTimer();
