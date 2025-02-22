@@ -230,7 +230,7 @@ function updateMatchResultButtons() {
 }
 
 function toggleEndGameResult(result) {
-    egp = 0; egd = 0; egs = 0;
+    egp = 0; egd = 0; egs = 0; egfd = 0; egfs = 0;
 
     if (result === 'parked') {
         egp = egp === 2 ? 0 : 2;
@@ -238,6 +238,10 @@ function toggleEndGameResult(result) {
         egd = egd === 12 ? 0 : 12;
     } else if (result === 'shallow') {
         egs = egs === 6 ? 0 : 6;
+    } else if (result === 'fdeep') {
+        egd = egd === 88 ? 0 : 88;
+    } else if (result === 'fshallow') {
+        egs = egs === 66 ? 0 : 66;
     }
 
     updateEndGameResultButtons();
@@ -248,6 +252,8 @@ function updateEndGameResultButtons() {
     document.getElementById("parkedButton").classList.toggle("active", egp === 2);
     document.getElementById("deepButton").classList.toggle("active", egd === 12);
     document.getElementById("shallowButton").classList.toggle("active", egs === 6);
+    document.getElementById("fdeepButton").classList.toggle("active", egd === 88);
+    document.getElementById("fshallowButton").classList.toggle("active", egs === 66);
     console.log('End game result buttons updated');
 }
 
