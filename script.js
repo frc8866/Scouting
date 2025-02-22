@@ -230,7 +230,7 @@ function updateMatchResultButtons() {
 }
 
 function toggleEndGameResult(result) {
-    egp = 0; egd = 0; egs = 0; egfd = 0; egfs = 0;
+    egp = 0; egd = 0; egs = 0;
 
     if (result === 'parked') {
         egp = egp === 2 ? 0 : 2;
