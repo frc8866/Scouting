@@ -161,7 +161,7 @@ function startIntermissionTimer() {
 }
 
 function startTeleopTimer() {
-    let timeLeft = 1;
+    let timeLeft = 135;
     document.getElementById("timer").textContent = timeLeft;
     document.getElementById("trackCycleButton").style.display = "block";
     document.getElementById("robotStatus").style.display = "block";
