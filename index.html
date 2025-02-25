@@ -145,9 +145,12 @@
             <button id="lossButton" class="toggle-button" onclick="toggleMatchResult('loss')">Lost Match</button>
             <button id="tieButton" class="toggle-button" onclick="toggleMatchResult('tie')">Tied Match</button>
             <p> -Climb/Park Options Below- </p>
+            <button id="didntmakeitButton" class="toggle-button" onclick="toggleEndGameResult('didntmakeit')">None</button>
             <button id="parkedButton" class="toggle-button" onclick="toggleEndGameResult('parked')">Parked</button>
             <button id="deepButton" class="toggle-button" onclick="toggleEndGameResult('deep')">Deep</button>
             <button id="shallowButton" class="toggle-button" onclick="toggleEndGameResult('shallow')">Shallow</button>
+            <button id="fdeepButton" class="toggle-button" onclick="toggleEndGameResult('fdeep')">Failed Deep</button>
+            <button id="fshallowButton" class="toggle-button" onclick="toggleEndGameResult('fshallow')">Failed Shallow</button>
         </div>
         <div id="nextButton" >
             <button id="endGameNext" onclick="goEndEndGame()">Next</button>
