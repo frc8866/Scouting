@@ -13,6 +13,7 @@ let cycleTimer;
 let cycleStartTime;
 let countdown, intermissionCountdown, teleopCountdown;
 
+
 document.addEventListener("DOMContentLoaded", function() {
     const postMatchForm = document.getElementById("postMatchForm");
     if (postMatchForm) {
