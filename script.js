@@ -161,7 +161,7 @@ function startIntermissionTimer() {
 }
 
 function startTeleopTimer() {
-    let timeLeft = 135;
+    let timeLeft = 1;
     document.getElementById("timer").textContent = timeLeft;
     document.getElementById("trackCycleButton").style.display = "block";
     document.getElementById("robotStatus").style.display = "block";
@@ -230,7 +230,7 @@ function updateMatchResultButtons() {
 }
 
 function toggleEndGameResult(result) {
-    egp = 0; egd = 0; egs = 0;
+    egp = 0; egd = 0; egs = 0; egfd = 0; egfs = 0;
 
     if (result === 'parked') {
         egp = egp === 2 ? 0 : 2;
