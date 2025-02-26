@@ -16,6 +16,11 @@ body.white-bg {
     color: black;
 }
 
+body.qr-display {
+    background-color: white;
+    color: black;
+}
+
 .container {
     width: 100%;
     max-width: 400px;
@@ -99,4 +104,22 @@ input, select, button {
 
 comments {
     width: 100%;
+}
+
+.phase-navigation {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+    gap: 10px;
+}
+
+.phase-navigation button {
+    flex: 1;
+    background-color: #ffc107;
+    color: black;
+    border: 1px solid black;
+}
+
+.phase-navigation button:hover {
+    background-color: #ffb300;
 }

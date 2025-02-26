@@ -4,7 +4,7 @@ let egp = 0, egd = 0, egs = 0;
 let egw = 0, egt = 0, egl = 0;
 let ts = 0;
 let sn = '', tn = 0, mn = 0, ac = 0, mt = ''; 
-let ra = 0, da = 0, cmnts = '', rp = '', gpc = '', as = '';
+let ra = 0, da = 0, cmnts = '', rp = '', gpc = '', as = '', pp = '';
 let dr = 0, br = 0, drc = 0, brc = 0;
 let map = 0, mtp = 0;
 let ppp = 0;
@@ -12,7 +12,6 @@ let cycleTimes = [];
 let cycleTimer;
 let cycleStartTime;
 let countdown, intermissionCountdown, teleopCountdown;
-
 
 document.addEventListener("DOMContentLoaded", function() {
     const postMatchForm = document.getElementById("postMatchForm");
@@ -142,7 +141,6 @@ function startIntermissionTimer() {
     let intermissionTimeLeft = 2;
     document.getElementById("timer").textContent = intermissionTimeLeft;
     console.log('Intermission timer started');
-    
 
     clearInterval(intermissionCountdown);
     intermissionCountdown = setInterval(() => {
@@ -162,7 +160,7 @@ function startIntermissionTimer() {
 }
 
 function startTeleopTimer() {
-    let timeLeft = 135;
+    let timeLeft = 15;
     document.getElementById("timer").textContent = timeLeft;
     document.getElementById("trackCycleButton").style.display = "block";
     document.getElementById("robotStatus").style.display = "block";
@@ -170,11 +168,6 @@ function startTeleopTimer() {
     togglePickUpPiece();
     updateScoringOptionsVisibility(); 
     console.log('Teleoperated Phase timer started');
-    const button = document.getElementById('trackCycleButton');
-    if (button.classList.contains('active')) {
-        console.log('resetting cycle');
-        button.click(); // Only stop the cycle if one is active
-    }
 
     clearInterval(teleopCountdown);
     teleopCountdown = setInterval(() => {
@@ -204,6 +197,36 @@ function startTeleopTimer() {
             document.getElementById("agtt").textContent = "Game Over";
             document.getElementById("nextButton").style.display = "block";
             console.log('Teleoperated Phase ended, Game Over');
+
+            // Restore previous end game data if it exists
+            let savedData = localStorage.getItem('endGameData');
+            if (savedData) {
+                let data = JSON.parse(savedData);
+                egw = data.endGame.win;
+                egt = data.endGame.tie;
+                egl = data.endGame.loss;
+                egp = data.endGame.parked;
+                egd = data.endGame.deep;
+                egs = data.endGame.shallow;
+                updateMatchResultButtons();
+                updateEndGameResultButtons();
+            }
+
+            // Restore previous state if it exists
+            let savedState = localStorage.getItem('gameState');
+            if (savedState) {
+                let state = JSON.parse(savedState);
+                if (state.endGame) {
+                    egw = state.endGame.win;
+                    egt = state.endGame.tie;
+                    egl = state.endGame.loss;
+                    egp = state.endGame.parked;
+                    egd = state.endGame.deep;
+                    egs = state.endGame.shallow;
+                    updateMatchResultButtons();
+                    updateEndGameResultButtons();
+                }
+            }
         }
     }, 1000);
 }
@@ -231,7 +254,7 @@ function updateMatchResultButtons() {
 }
 
 function toggleEndGameResult(result) {
-    egp = 0; egd = 0; egs = 0; egfd = 0; egfs = 0;
+    egp = 0; egd = 0; egs = 0;
 
     if (result === 'parked') {
         egp = egp === 2 ? 0 : 2;
@@ -239,10 +262,6 @@ function toggleEndGameResult(result) {
         egd = egd === 12 ? 0 : 12;
     } else if (result === 'shallow') {
         egs = egs === 6 ? 0 : 6;
-    } else if (result === 'fdeep') {
-        egd = egd === 88 ? 0 : 88;
-    } else if (result === 'fshallow') {
-        egs = egs === 66 ? 0 : 66;
     }
 
     updateEndGameResultButtons();
@@ -253,8 +272,6 @@ function updateEndGameResultButtons() {
     document.getElementById("parkedButton").classList.toggle("active", egp === 2);
     document.getElementById("deepButton").classList.toggle("active", egd === 12);
     document.getElementById("shallowButton").classList.toggle("active", egs === 6);
-    document.getElementById("fdeepButton").classList.toggle("active", egd === 88);
-    document.getElementById("fshallowButton").classList.toggle("active", egs === 66);
     console.log('End game result buttons updated');
 }
 
@@ -337,6 +354,7 @@ function goEndEndGame() {
 }
 
 function submitData() {
+    pp = document.getElementById("penaltyPoints").value;
     as = document.getElementById("allianceScore").value;
     ra = document.getElementById("robotAbility").value;
     da = document.getElementById("driverSkill").value;
@@ -348,6 +366,16 @@ function submitData() {
 }
 
 function showMatchToMaster() {
+    const tempStyle = document.createElement('style');
+    tempStyle.textContent = `
+        body.qr-display {
+            background-color: white;
+            color: black;
+        }
+    `;
+    document.head.appendChild(tempStyle);
+    document.body.classList.add('qr-display');
+    
     document.body.style.backgroundColor = "white";
     document.body.style.color = "black";
     document.getElementById("gameSection").style.display = "none";
@@ -362,36 +390,28 @@ function showMatchToMaster() {
 }
 
 function updateAcl1(value) {
-    let newValue = acl1 + value;
-    if (newValue < 0 || (newValue / 3) > 12) return;
-    acl1 = newValue;
+    acl1 = Math.max(0, acl1 + value);
     document.getElementById("acl1Count").textContent = acl1 / 3;
     console.log(`ACL1 updated: ${value > 0 ? 'increased' : 'decreased'} to ${acl1 / 3}`);
     if (value > 0) toggleCycleTimer();
 }
 
 function updateAcl2(value) {
-    let newValue = acl2 + value;
-    if (newValue < 0 || (newValue / 4) > 12) return;
-    acl2 = newValue;
+    acl2 = Math.max(0, acl2 + value);
     document.getElementById("acl2Count").textContent = acl2 / 4;
     console.log(`ACL2 updated: ${value > 0 ? 'increased' : 'decreased'} to ${acl2 / 4}`);
     if (value > 0) toggleCycleTimer();
 }
 
 function updateAcl3(value) {
-    let newValue = acl3 + value;
-    if (newValue < 0 || (newValue / 6) > 12) return;
-    acl3 = newValue;
+    acl3 = Math.max(0, acl3 + value);
     document.getElementById("acl3Count").textContent = acl3 / 6;
     console.log(`ACL3 updated: ${value > 0 ? 'increased' : 'decreased'} to ${acl3 / 6}`);
     if (value > 0) toggleCycleTimer();
 }
 
 function updateAcl4(value) {
-    let newValue = acl4 + value;
-    if (newValue < 0 || (newValue / 7) > 12) return;
-    acl4 = newValue;
+    acl4 = Math.max(0, acl4 + value);
     document.getElementById("acl4Count").textContent = acl4 / 7;
     console.log(`ACL4 updated: ${value > 0 ? 'increased' : 'decreased'} to ${acl4 / 7}`);
     if (value > 0) toggleCycleTimer();
@@ -412,36 +432,28 @@ function updateAan(value) {
 }
 
 function updateTcl1(value) {
-    let newValue = tcl1 + value;
-    if (newValue < 0 || (newValue / 2) > 12) return;
-    tcl1 = newValue;
+    tcl1 = Math.max(0, tcl1 + value);
     document.getElementById("tcl1Count").textContent = tcl1 / 2;
     console.log(`TCL1 updated: ${value > 0 ? 'increased' : 'decreased'} to ${tcl1 / 2}`);
     if (value > 0) toggleCycleTimer();
 }
 
 function updateTcl2(value) {
-    let newValue = tcl2 + value;
-    if (newValue < 0 || (newValue / 3) > 12) return;
-    tcl2 = newValue;
+    tcl2 = Math.max(0, tcl2 + value);
     document.getElementById("tcl2Count").textContent = tcl2 / 3;
     console.log(`TCL2 updated: ${value > 0 ? 'increased' : 'decreased'} to ${tcl2 / 3}`);
     if (value > 0) toggleCycleTimer();
 }
 
 function updateTcl3(value) {
-    let newValue = tcl3 + value;
-    if (newValue < 0 || (newValue / 4) > 12) return;
-    tcl3 = newValue;
+    tcl3 = Math.max(0, tcl3 + value);
     document.getElementById("tcl3Count").textContent = tcl3 / 4;
     console.log(`TCL3 updated: ${value > 0 ? 'increased' : 'decreased'} to ${tcl3 / 4}`);
     if (value > 0) toggleCycleTimer();
 }
 
 function updateTcl4(value) {
-    let newValue = tcl4 + value;
-    if (newValue < 0 || (newValue / 5) > 12) return;
-    tcl4 = newValue;
+    tcl4 = Math.max(0, tcl4 + value);
     document.getElementById("tcl4Count").textContent = tcl4 / 5;
     console.log(`TCL4 updated: ${value > 0 ? 'increased' : 'decreased'} to ${tcl4 / 5}`);
     if (value > 0) toggleCycleTimer();
@@ -511,22 +523,20 @@ function resetRobotButtons() {
 }
 
 function missAutoPiece() {
-    
+    map++;
+    console.log(`Auto piece missed - total misses: ${map}`);
     const button = document.getElementById('trackCycleButton');
     if (button.classList.contains('active')) {
-        map++;
-    console.log(`Auto piece missed - total misses: ${map}`);
         console.log('Active cycle cancelled due to miss');
         button.click(); // Only stop the cycle if one is active
     }
 }
 
 function missTeleopPiece() {
-    
+    mtp++;
+    console.log(`Teleop piece missed - total misses: ${mtp}`);
     const button = document.getElementById('trackCycleButton');
     if (button.classList.contains('active')) {
-        mtp++;
-    console.log(`Teleop piece missed - total misses: ${mtp}`);
         console.log('Active cycle cancelled due to miss');
         button.click(); // Only stop the cycle if one is active
     }
@@ -539,7 +549,7 @@ function resetAll() {
     egp = egd = egs = egw = egt = egl = 0;
     ts = 0;
     sn = ''; tn = mn = ac = 0; mt = '';
-    ra = da = cmnts = rp = gpc = as = '';
+    ra = da = cmnts = rp = gpc = as = '', pp = '';
     dr = br = drc = brc = 0;
     map = mtp = 0;
     ppp = 0;
@@ -550,6 +560,31 @@ function resetAll() {
     clearInterval(teleopCountdown);
 
     // Reset UI elements
+    document.body.style.backgroundColor = "black"; // Reset background color
+    document.body.style.color = "gold"; // Reset text color
+    document.body.classList.remove('qr-display'); // Remove QR display class
+    
+    // Remove active class from left during auto button
+    const leftAutoButton = document.getElementById("leftAutonomousButton");
+    if (leftAutoButton.classList.contains('active')) {
+        leftAutoButton.classList.remove('active');
+    }
+    
+    // Reset robot status buttons
+    const brbutton = document.getElementById('brokenRobotButton');
+    const drbutton = document.getElementById('deadRobotButton');
+    drbutton.textContent = 'Dead Robot';
+    brbutton.textContent = 'Broken Robot';
+    drbutton.classList.remove('active');
+    
+    // Reset end game buttons
+    document.getElementById("winButton").classList.remove("active");
+    document.getElementById("lossButton").classList.remove("active");
+    document.getElementById("tieButton").classList.remove("active");
+    document.getElementById("parkedButton").classList.remove("active");
+    document.getElementById("deepButton").classList.remove("active");
+    document.getElementById("shallowButton").classList.remove("active");
+    
     document.getElementById("scouterName").value = '';
     document.getElementById("matchNumber").value = '';
     document.getElementById("teamNumber").value = '';
@@ -563,24 +598,11 @@ function resetAll() {
     document.getElementById("gameSection").style.display = "none";
     document.getElementById("endGameButtons").style.display = "none";
     document.getElementById("qrCodeButtonSection").style.display = "none";
+    document.getElementById("MatchToMaster").remove();
 
-    // Safely remove MatchToMaster if it exists
-    const matchToMaster = document.getElementById("MatchToMaster");
-    if (matchToMaster) {
-        matchToMaster.remove();
-    }
-
-    // Reset timer and game phase elements
     document.getElementById("timer").textContent = '15';
-    document.getElementById("timer").style.display = "block";  // Ensure timer is visible
-    document.getElementById("timer").style.color = "gold";    // Reset timer color
+    document.getElementById("timer").style.display = "block"; // Make sure timer is visible
     document.getElementById("gamePhase").textContent = 'Pre Game';
-    document.getElementById("gamePhase").style.fontWeight = "normal";
-
-    // Reset agtt text and make it visible
-    document.getElementById("agtt").style.display = "block";
-    document.getElementById("agtt").textContent = "Real Time Phases and Timer";
-
     document.getElementById("startGameButton").disabled = false;
     document.getElementById("startGameButton").style.display = "block";
     document.getElementById("trackCycleButton").style.display = "none";
@@ -593,65 +615,36 @@ function resetAll() {
     // Reset scoring counts
     document.querySelectorAll("[id*='Count']").forEach(count => count.textContent = '0');
 
-    // Reset background color
-    document.body.style.backgroundColor = "black";
-    document.body.style.color = "gold";
-    document.body.classList.remove('white-bg'); // Remove the white background class
-
-    // Reset all button states and their visual appearances
-    const buttonsToReset = [
-        'deadRobotButton',
-        'brokenRobotButton',
-        'leftAutonomousButton',
-        'trackCycleButton'
-    ];
-
-    buttonsToReset.forEach(buttonId => {
-        const button = document.getElementById(buttonId);
-        if (button) {
-            button.classList.remove('active');
-            if (buttonId === 'deadRobotButton') {
-                button.textContent = 'Dead Robot';
-            } else if (buttonId === 'brokenRobotButton') {
-                button.textContent = 'Broken Robot';
-            } else if (buttonId === 'trackCycleButton') {
-                button.textContent = 'Pick Up Piece';
-            }
-        }
-    });
-
-    // Reset all associated variables
-    dr = 0; br = 0; drc = 0; brc = 0; // Robot status variables
-    lda = 0;                          // Left during autonomous
-    ppp = 0;                          // Pick up piece state
+    // Reset timer color
+    const timer = document.getElementById("timer");
+    timer.style.color = "gold";
+    timer.style.display = "block";
     
-    // Reset the robot status button text
-    document.getElementById('resetRobotButton').textContent = 'Reset Counters!';
+    // Stop any active cycle timer
+    const cycleButton = document.getElementById('trackCycleButton');
+    if (cycleButton.classList.contains('active')) {
+        cycleButton.click(); // This will trigger toggleCycleTimer to stop it
+    }
+    cycleButton.textContent = 'Pick Up Piece';
 
-    // Reset post-match form data
+    // Reset post match form data
     document.getElementById("driverSkill").value = '';
     document.getElementById("robotAbility").value = '';
     document.getElementById("gamepieceConsistency").value = '';
     document.getElementById("rolePlayed").value = '';
     document.getElementById("comments").value = '';
     document.getElementById("allianceScore").value = '';
-
-    // Reset end game buttons
-    const endGameButtonIds = [
-        'winButton',
-        'lossButton',
-        'tieButton',
-        'parkedButton',
-        'deepButton',
-        'shallowButton'
-    ];
-
-    endGameButtonIds.forEach(buttonId => {
-        const button = document.getElementById(buttonId);
-        if (button) {
-            button.classList.remove('active');
-        }
-    });
+    document.getElementById("penaltyPoints").value = '';
+    
+    // Clean up QR code elements
+    const existingQR = document.querySelector("#MatchToMaster canvas");
+    if (existingQR) {
+        existingQR.remove();
+    }
+    const existingStyle = document.querySelector('style[data-qr-style]');
+    if (existingStyle) {
+        existingStyle.remove();
+    }
 
     console.log('All data and UI elements reset');
 }
@@ -665,7 +658,8 @@ function generateQRCode() {
     `${ra},${da},${gpc},${rp},${cmnts},${as},` +
     `${dr},${br},${drc},${brc},` +
     `${map},${mtp},` +
-    `${cycleTimes}`;
+    `${cycleTimes},` +
+    `${pp}`;
     let matchToMasterSection = document.getElementById("MatchToMaster");
     matchToMasterSection.innerHTML = ""; 
 
@@ -684,4 +678,85 @@ function generateQRCode() {
 
     matchToMasterSection.appendChild(restartButton);
     console.log('QR code generated');
+}
+
+function goBackToTeleop() {
+    // Save current end game selections
+    let scoutingData = {
+        endGame: {
+            win: egw,
+            tie: egt,
+            loss: egl,
+            parked: egp,
+            deep: egd,
+            shallow: egs
+        }
+    };
+    localStorage.setItem('endGameData', JSON.stringify(scoutingData));
+    
+    // Reset UI for teleop phase
+    document.getElementById("timer").style.display = "block";
+    document.getElementById("timer").textContent = "135";
+    document.getElementById("timer").style.color = "gold";
+    document.getElementById("gamePhase").textContent = "Teleoperated Phase";
+    document.getElementById("gamePhase").style.display = "block";
+    document.getElementById("teleopPhase").style.display = "block";
+    document.getElementById("endGameButtons").style.display = "none";
+    document.getElementById("trackCycleButton").style.display = "block";
+    document.getElementById("robotStatus").style.display = "block";
+    document.getElementById("nextButton").style.display = "none";
+}
+
+function goToPhase(phase) {
+    // Save current state
+    localStorage.setItem('gameState', JSON.stringify({
+        auto: {
+            acl1, acl2, acl3, acl4, aap, aan, lda
+        },
+        teleop: {
+            tcl1, tcl2, tcl3, tcl4, tap, tan
+        },
+        endGame: {
+            win: egw,
+            tie: egt,
+            loss: egl,
+            parked: egp,
+            deep: egd,
+            shallow: egs
+        }
+    }));
+
+    // Hide all phases
+    document.getElementById("autoPhase").style.display = "none";
+    document.getElementById("teleopPhase").style.display = "none";
+    document.getElementById("endGameButtons").style.display = "none";
+    document.getElementById("nextButton").style.display = "none";
+
+    // Show timer and phase text
+    document.getElementById("timer").style.display = "block";
+    document.getElementById("gamePhase").style.display = "block";
+    document.getElementById("trackCycleButton").style.display = "block";
+    document.getElementById("robotStatus").style.display = "block";
+
+    // Switch to requested phase
+    switch(phase) {
+        case 'auto':
+            document.getElementById("autoPhase").style.display = "block";
+            document.getElementById("gamePhase").textContent = "Autonomous Phase";
+            document.getElementById("timer").textContent = "";
+            break;
+        case 'teleop':
+            document.getElementById("teleopPhase").style.display = "block";
+            document.getElementById("gamePhase").textContent = "Teleoperated Phase";
+            document.getElementById("timer").textContent = "";
+            break;
+        case 'endgame':
+            document.getElementById("endGameButtons").style.display = "block";
+            document.getElementById("nextButton").style.display = "block";
+            document.getElementById("gamePhase").textContent = "End Game";
+            document.getElementById("timer").style.display = "none";
+            document.getElementById("trackCycleButton").style.display = "none";
+            document.getElementById("robotStatus").style.display = "none";
+            break;
+    }
 }

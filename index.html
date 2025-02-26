@@ -54,6 +54,9 @@
         <button id="trackCycleButton" onclick="toggleCycleTimer()">Pick Up Piece</button>
 
         <div id="autoPhase" style="display: none;">
+            <div class="phase-navigation">
+                <button class="btn btn-warning" onclick="goToPhase('teleop')">Manual Next</button>
+            </div>
             <div class="scoring-option">
                 <button onclick="updateAcl1(-3)">-</button>
                 &nbsp;&nbsp;<span id="acl1Count">0</span>&nbsp;&nbsp;
@@ -98,6 +101,10 @@
         </div>
 
         <div id="teleopPhase" style="display: none;">
+            <div class="phase-navigation">
+                <button class="btn btn-warning" onclick="goToPhase('auto')">Manual Back</button>
+                <button class="btn btn-warning" onclick="goToPhase('endgame')">Manual Next</button>
+            </div>
             <div class="scoring-option">
                 <button onclick="updateTcl1(-2)">-</button>
                 &nbsp;&nbsp;<span id="tcl1Count">0</span>&nbsp;&nbsp;
@@ -140,6 +147,9 @@
         </div>
 
         <div id="endGameButtons" class="endGameButtons">
+            <div class="phase-navigation">
+                <button class="btn btn-warning" onclick="goToPhase('teleop')">Back to Teleop</button>
+            </div>
             <p> -Match Result Options Below- </p>
             <button id="winButton" class="toggle-button" onclick="toggleMatchResult('win')">Won Match</button>
             <button id="lossButton" class="toggle-button" onclick="toggleMatchResult('loss')">Lost Match</button>
@@ -196,6 +206,9 @@
 
                 <label for="comments">Additional Comments:</label>
                 <textarea id="comments" name="comments" rows="5" placeholder="Type your comments here..."></textarea>
+                <p></p>
+                <label for="penaltyPoints">Penalty Points:</label>
+                <textarea id="penaltyPoints" name="penaltyPoints" placeholder="Type the penalty points here..." oninput="validateNumericTextarea(this)" required></textarea>
                 <p></p>
                 <label for="allianceScore">Alliance Score:</label>
                 <textarea id="allianceScore" name="allianceScore" placeholder="Type the Alliance's end score here..." oninput="validateNumericTextarea(this)" required></textarea>
