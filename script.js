@@ -300,6 +300,7 @@ function togglePickUpPiece() {
 
 function updateScoringOptionsVisibility() {
     const plusButtons = document.querySelectorAll("[id*='plus']");
+    const phase = document.getElementById("gamePhase").textContent;
     plusButtons.forEach(button => {
         button.style.display = (ppp === 0) ? 'none' : 'block';
     });
@@ -307,7 +308,7 @@ function updateScoringOptionsVisibility() {
     const autoPhaseScoringOptions = document.querySelectorAll("#autoPhase .scoring-option");
     autoPhaseScoringOptions.forEach(option => {
         option.style.display = (document.getElementById("gamePhase").textContent === "Autonomous Phase" && lda !== 3) ? 'none' : 'flex';
-        document.getElementById("trackCycleButton").style.display = (lda !== 3) ? 'none' : 'block';
+        document.getElementById("trackCycleButton").style.display = (lda !== 3 && phase !== "Teleoperated Phase") ? 'none' : 'block';
     });
     const autoPlusButtons = document.querySelectorAll("#autoPhase [id*='plus']");
     autoPlusButtons.forEach(button => {
@@ -497,6 +498,7 @@ function toggleBrokenRobot() {
     const brbutton = document.getElementById('brokenRobotButton');
     brc++;
     br = 1;
+
     brbutton.textContent = `Broken Robot (Pressed ${brc} times)`;
     console.log(`Broken robot toggled: ${brc} times`);
 }
@@ -708,6 +710,9 @@ function goBackToTeleop() {
 }
 
 function goToPhase(phase) {
+    let timeLeft = 0;
+    clearInterval(countdown);
+    updateTimeText();
     // Save current state
     localStorage.setItem('gameState', JSON.stringify({
         auto: {
@@ -743,17 +748,19 @@ function goToPhase(phase) {
         case 'auto':
             document.getElementById("autoPhase").style.display = "block";
             document.getElementById("gamePhase").textContent = "Autonomous Phase";
-            document.getElementById("timer").textContent = "";
+            document.getElementById("gamePhase").style.display = "none";
+            document.getElementById("timer").style.display = "none";
             break;
         case 'teleop':
             document.getElementById("teleopPhase").style.display = "block";
             document.getElementById("gamePhase").textContent = "Teleoperated Phase";
-            document.getElementById("timer").textContent = "";
+            document.getElementById("gamePhase").style.display = "none";
+            document.getElementById("timer").style.display = "none";
             break;
         case 'endgame':
             document.getElementById("endGameButtons").style.display = "block";
             document.getElementById("nextButton").style.display = "block";
-            document.getElementById("gamePhase").textContent = "End Game";
+            document.getElementById("gamePhase").style.display = "none";
             document.getElementById("timer").style.display = "none";
             document.getElementById("trackCycleButton").style.display = "none";
             document.getElementById("robotStatus").style.display = "none";
